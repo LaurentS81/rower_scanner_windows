@@ -1,0 +1,33 @@
+name: Build Windows EXE
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Télécharger le projet
+      uses: actions/checkout@v4
+
+    - name: Installer Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+
+    - name: Installer dépendances
+      run: |
+        pip install bleak==0.20.2
+        pip install pyinstaller
+
+    - name: Créer l'exécutable
+      run: |
+        pyinstaller --onefile --console rower_scanner.py
+
+    - name: Sauvegarder l'exécutable
+      uses: actions/upload-artifact@v4
+      with:
+        name: rower_scanner_windows
+        path: dist/rower_scanner.exe
